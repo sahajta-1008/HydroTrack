@@ -1,303 +1,254 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HydroTrack - Water Tracker</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            background: #f2f8ff;
-            color: #203047;
-            font-family: Arial, sans-serif
-        }
-
-        .container {
-            max-width: 950px
-        }
-
-        .card {
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05)
-        }
-
-        .heading {
-            color: #3988e8;
-            font-weight: bold
-        }
-
-        .total {
-            font-size: 48px;
-            font-weight: bold
-        }
-
-        .progress {
-            height: 18px;
-            border-radius: 20px;
-            background: #e1eaf5
-        }
-
-        .progress-bar {
-            background: linear-gradient(90deg, #79baff, #3988e8);
-            border-radius: 20px;
-            transition: width 0.5s
-        }
-
-        .btn-primary {
-            background: #3988e8;
-            border: none
-        }
-
-        .btn-primary:hover {
-            background: #2475d2
-        }
-
-        .quick-btn {
-            background: #eaf4ff;
-            color: #286bb4;
-            border: 1px solid #c9e1fa;
-            border-radius: 10px
-        }
-
-        .quick-btn:hover {
-            background: #d8ebff
-        }
-
-        .chart-container {
-            height: 280px
-        }
-
-        .date-text {
-            color: #718096;
-            font-size: 16px
-        }
-
-        .glass-count {
-            font-size: 30px;
-            font-weight: bold;
-            color: #3988e8
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HydroTrack 💧</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#eaf6ff;color:#23415b}
+.container{max-width:750px;margin:30px auto;padding:20px}
+.card{background:white;padding:22px;border-radius:18px;margin:16px 0;box-shadow:0 4px 15px #c8ddeb}
+h1{text-align:center;color:#168bd0}
+h2{color:#168bd0}
+input{padding:12px;border:1px solid #b9d5e8;border-radius:9px;width:100%;margin:7px 0;font-size:15px}
+button{background:#168bd0;color:white;border:0;padding:12px 17px;border-radius:9px;margin:5px;cursor:pointer;font-size:15px}
+button:hover{background:#0875b7}
+.secondary{background:#6c91aa}
+#app,#dashboard{display:none}
+.progress{height:20px;background:#dcecf6;border-radius:20px;overflow:hidden}
+#progressBar{height:100%;width:0;background:#21a4dc;transition:.3s}
+#message{text-align:center;background:#eaf6ff;padding:15px;border-radius:12px;font-weight:bold}
+#log p{border-bottom:1px solid #e5eef4;padding:7px}
+.small{font-size:13px;color:#60798d}
+</style>
 </head>
-
 <body>
-    <div class="container py-5">
-        <div class="mb-4 d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="heading">💧 HydroTrack</h1>
-                <p class="text-secondary mb-0">A little water, one day at a time.</p>
-            </div>
-            <div class="text-end">
-                <h6 id="day" class="fw-bold mb-1"></h6>
-                <p id="date" class="date-text mb-0"></p>
-            </div>
-        </div>
-        <div class="card p-4 mb-4">
-            <h5>Today's Water Intake 💧</h5>
-            <div class="d-flex align-items-end">
-                <div class="total" id="total">0</div>
-                <h5 class="text-secondary mb-2 ms-2">ml</h5>
-            </div>
-            <h6 class="text-primary mt-2" id="litres">0 L</h6>
-            <div class="d-flex align-items-center justify-content-between mt-3 mb-2">
-                <span class="fw-bold">Daily Progress</span>
-                <span class="fw-bold" id="percentage">0%</span>
-            </div>
-            <div class="progress">
-                <div class="progress-bar" id="progress" style="width:0%"></div>
-            </div>
-            <p class="text-secondary mt-2 mb-1" id="progressText">0 ml completed out of 2000 ml</p>
-            <div class="mt-3">
-                <label class="form-label">Daily Goal (ml)</label>
-                <div class="input-group">
-                    <input type="number" id="goal" class="form-control" value="2000" min="1">
-                    <button class="btn btn-primary" onclick="saveGoal()">Save Goal</button>
-                </div>
-            </div>
-        </div>
-        <div class="card p-4 mb-4">
-            <h4>🥛 Glass Counter</h4>
-            <p class="text-secondary">1 glass = 250 ml</p>
-            <div class="d-flex align-items-center gap-3 mb-3">
-                <div class="glass-count" id="glasses">0</div>
-                <div>
-                    <h6 class="mb-0">Glasses Drank</h6>
-                    <small class="text-secondary">Today</small>
-                </div>
-            </div>
-            <button class="btn btn-primary me-2" onclick="quickAdd(250)">+1 Glass</button>
-            <button class="btn quick-btn" onclick="quickAdd(500)">+2 Glasses</button>
-        </div>
-        <div class="card p-4 mb-4">
-            <h4>Add Water 💦</h4>
-            <p class="text-secondary">Enter how many ml of water you drank.</p>
-            <div class="input-group mb-3">
-                <input type="number" id="amount" class="form-control" placeholder="Enter amount in ml">
-                <button class="btn btn-primary" onclick="addWater()">Add</button>
-            </div>
-            <p class="fw-bold">Quick Add</p>
-            <button class="btn quick-btn me-2" onclick="quickAdd(150)">+150 ml</button>
-            <button class="btn quick-btn me-2" onclick="quickAdd(250)">+250 ml</button>
-            <button class="btn quick-btn" onclick="quickAdd(500)">+500 ml</button>
-            <p id="message" class="mt-3"></p>
-        </div>
-        <div class="card p-4 mb-4">
-            <h4>📊 Weekly Progress</h4>
-            <p class="text-secondary">Your water intake over the last 7 days.</p>
-            <div class="chart-container">
-                <canvas id="weeklyChart"></canvas>
-            </div>
-        </div>
-        <div class="card p-4">
-            <h4>Today's Drink Log</h4>
-            <div id="drinkLog">No drinks added yet.</div>
-            <button class="btn btn-outline-danger btn-sm mt-3" onclick="clearToday()">Clear Today's Log</button>
-        </div>
-    </div>
-    <script>
-        let entries = JSON.parse(localStorage.getItem("waterEntries") || "[]");
-        let goal = Number(localStorage.getItem("waterGoal") || 2000);
-        document.getElementById("goal").value = goal;
+<div class="container">
+<h1>💧 HydroTrack</h1>
 
-        // Display day and date
-        function showDate() {
-            let today = new Date();
-            document.getElementById("day").innerText = today.toLocaleDateString("en-IN", { weekday: "long" });
-            document.getElementById("date").innerText = today.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
-        }
+<div class="card" id="login">
+<h2>Welcome to HydroTrack!</h2>
+<p>Create an account or log in to track your water intake.</p>
+<input id="name" placeholder="Your name (for sign up)">
+<input id="email" type="email" placeholder="Email address">
+<input id="password" type="password" placeholder="Password">
+<button onclick="signup()">Create Account</button>
+<button onclick="signin()">Log In</button>
+<p id="authMessage" class="small"></p>
+</div>
 
-        // Get today's date
-        function getToday() {
-            let d = new Date();
-            return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-        }
+<div id="dashboard">
+<div class="card">
+<h2 id="welcome">Hello!</h2>
+<p id="date"></p>
+<p id="message">Every sip counts! 💧</p>
+<button class="secondary" onclick="logout()">Log Out</button>
+</div>
 
-        // Calculate today's total
-        function getTotal() {
-            return entries.filter(e => e.date === getToday()).reduce((sum, e) => sum + e.amount, 0);
-        }
+<div class="card">
+<h2>Today's Water Intake</h2>
+<h2 id="total">0 ml</h2>
+<p id="litres">0.00 L</p>
+<p id="glasses">0 glasses</p>
+<label>Daily goal (ml)</label>
+<input id="goal" type="number" value="2000" min="250" onchange="updateDisplay()">
+<div class="progress"><div id="progressBar"></div></div>
+<p id="percentage">0% completed</p>
+<button onclick="addWater(250)">+ 1 Glass (250 ml)</button>
+<button onclick="addWater(500)">+ 2 Glasses</button>
+<button onclick="addWater(150)">+ 150 ml</button>
+<button onclick="addWater(500)">+ 500 ml</button>
+<input id="custom" type="number" placeholder="Enter amount in ml">
+<button onclick="addCustom()">Add Custom Amount</button>
+</div>
 
-        // Calculate glasses
-        function getGlasses() {
-            return Math.floor(getTotal() / 250);
-        }
+<div class="card">
+<h2>Today's Drink Log</h2>
+<div id="log">No water added yet.</div>
+<button class="secondary" onclick="clearToday()">Clear Today's Entries</button>
+</div>
 
-        // Add water
-        function addWater() {
-            let amount = Number(document.getElementById("amount").value);
-            if (!Number.isFinite(amount) || amount <= 0 || amount > 10000) {
-                document.getElementById("message").innerText = "Please enter an amount between 1 and 10000 ml.";
-                return;
-            }
-            addEntry(amount);
-            document.getElementById("amount").value = "";
-        }
+<div class="card">
+<h2>Weekly Progress</h2>
+<div id="week"></div>
+</div>
+</div>
+</div>
 
-        // Add entry
-        function addEntry(amount) {
-            entries.push({ amount: Math.round(amount), date: getToday(), time: new Date().toLocaleTimeString() });
-            saveData();
-            document.getElementById("message").innerText = "Water added successfully! 💧";
-            updateWebsite();
-        }
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
-        // Quick add
-        function quickAdd(amount) {
-            addEntry(amount);
-        }
+<script>
+// Firebase project configuration
+const firebaseConfig = {
+apiKey: "AIzaSyAyA2vZQEp6vc7xpxMms1JURTAE77V3X4Jwg",
+authDomain: "hydrotrack-d5802.firebaseapp.com",
+projectId: "hydrotrack-d5802",
+storageBucket: "hydrotrack-d5802.firebasestorage.app",
+messagingSenderId: "498634741783",
+appId: "1:498634741783:web:feb17d16686635606da452"
+};
 
-        // Save data
-        function saveData() {
-            localStorage.setItem("waterEntries", JSON.stringify(entries));
-        }
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-        // Save daily goal
-        function saveGoal() {
-            let newGoal = Number(document.getElementById("goal").value);
-            if (!Number.isFinite(newGoal) || newGoal <= 0 || newGoal > 10000) {
-                alert("Please enter a valid goal.");
-                return;
-            }
-            goal = Math.round(newGoal);
-            localStorage.setItem("waterGoal", goal);
-            updateWebsite();
-        }
+let entries = [];
+let currentUser = null;
 
-        // Update progress, ml, litres and glasses
-        function updateProgress() {
-            let total = getTotal();
-            let percentage = Math.round((total / goal) * 100);
-            document.getElementById("total").innerText = total.toLocaleString("en-IN");
-            document.getElementById("litres").innerText = (total / 1000).toFixed(2) + " L";
-            document.getElementById("glasses").innerText = getGlasses();
-            document.getElementById("progress").style.width = Math.min(percentage, 100) + "%";
-            document.getElementById("percentage").innerText = percentage + "%";
-            document.getElementById("progressText").innerText = total.toLocaleString("en-IN") + " ml completed out of " + goal.toLocaleString("en-IN") + " ml";
-            if (percentage >= 100) {
-                document.getElementById("progressText").innerText = "🎉 Daily goal completed!";
-            }
-        }
+const sayings = [
+"Every sip counts! Keep going! 💧",
+"You're doing amazing! Keep it up! 🌟",
+"Small steps make a big difference!",
+"Your body deserves care. Keep drinking water!",
+"One glass at a time. You've got this! 💙",
+"Well done! You're building a healthy habit!",
+"Stay hydrated and keep shining! ✨"
+];
 
-        // Update drink history
-        function updateLog() {
-            let todayEntries = entries.filter(e => e.date === getToday()).slice().reverse();
-            let log = document.getElementById("drinkLog");
-            if (todayEntries.length === 0) {
-                log.innerHTML = '<p class="text-secondary">No drinks added yet.</p>';
-                return;
-            }
-            log.innerHTML = "";
-            todayEntries.forEach(entry => {
-                let row = document.createElement("p");
-                row.className = "border-bottom pb-2";
-                row.innerText = "💧 " + entry.amount + " ml - " + entry.time;
-                log.appendChild(row);
-            });
-        }
+function todayKey(){
+return new Date().toLocaleDateString("en-CA");
+}
 
-        // Weekly Chart
-        let chart;
-        function updateChart() {
-            let labels = [];
-            let values = [];
-            for (let i = 6; i >= 0; i--) {
-                let date = new Date();
-                date.setDate(date.getDate() - i);
-                let key = date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
-                labels.push(date.toLocaleDateString("en-IN", { weekday: "short", day: "numeric" }));
-                let total = entries.filter(e => e.date === key).reduce((sum, e) => sum + e.amount, 0);
-                values.push(total);
-            }
-            if (chart) { chart.destroy(); }
-            chart = new Chart(document.getElementById("weeklyChart"), {
-                type: "bar",
-                data: { labels: labels, datasets: [{ label: "Water Intake (ml)", data: values, backgroundColor: "#79baff", borderRadius: 8 }] },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, title: { display: true, text: "Water in ml" } } } }
-            });
-        }
+function showDate(){
+document.getElementById("date").textContent =
+new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+}
 
-        // Clear today's entries
-        function clearToday() {
-            if (!confirm("Clear all of today's entries?")) return;
-            entries = entries.filter(e => e.date !== getToday());
-            saveData();
-            updateWebsite();
-        }
+function showMessage(){
+document.getElementById("message").textContent =
+sayings[Math.floor(Math.random()*sayings.length)];
+}
 
-        // Update everything
-        function updateWebsite() {
-            updateProgress();
-            updateLog();
-            updateChart();
-        }
+function userDayRef(){
+return db.collection("users").doc(currentUser.uid)
+.collection("days").doc(todayKey());
+}
 
-        // Start website
-        showDate();
-        updateWebsite();
-    </script>
+async function signup(){
+const name=document.getElementById("name").value.trim();
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value;
+if(!name||!email||!password){
+authMessage.textContent="Please fill in your name, email and password.";
+return;
+}
+try{
+const result=await auth.createUserWithEmailAndPassword(email,password);
+await result.user.updateProfile({displayName:name});
+await db.collection("users").doc(result.user.uid).set({name:name,email:email});
+await startDashboard(result.user);
+}catch(error){
+authMessage.textContent=error.message;
+}
+}
+
+async function signin(){
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value;
+try{
+const result=await auth.signInWithEmailAndPassword(email,password);
+await startDashboard(result.user);
+}catch(error){
+authMessage.textContent=error.message;
+}
+}
+
+async function logout(){
+await auth.signOut();
+}
+
+auth.onAuthStateChanged(async user=>{
+if(user){
+await startDashboard(user);
+}else{
+currentUser=null;
+document.getElementById("login").style.display="block";
+document.getElementById("dashboard").style.display="none";
+}
+});
+
+async function startDashboard(user){
+currentUser=user;
+document.getElementById("login").style.display="none";
+document.getElementById("dashboard").style.display="block";
+const profile=await db.collection("users").doc(user.uid).get();
+const name=profile.exists?profile.data().name:(user.displayName||"there");
+document.getElementById("welcome").textContent="Well done, "+name+"! 💙";
+showDate();
+showMessage();
+await loadToday();
+await loadWeek();
+}
+
+async function loadToday(){
+const doc=await userDayRef().get();
+entries=doc.exists?(doc.data().entries||[]):[];
+updateDisplay();
+}
+
+async function saveToday(){
+await userDayRef().set({entries:entries});
+updateDisplay();
+await loadWeek();
+}
+
+function getTotal(){
+return entries.reduce((sum,item)=>sum+Number(item.amount),0);
+}
+
+function updateDisplay(){
+const total=getTotal();
+const goal=Math.max(1,Number(document.getElementById("goal").value)||2000);
+const percent=Math.round(total/goal*100);
+document.getElementById("total").textContent=total+" ml";
+document.getElementById("litres").textContent=(total/1000).toFixed(2)+" L";
+document.getElementById("glasses").textContent=Math.floor(total/250)+" glasses";
+document.getElementById("progressBar").style.width=Math.min(percent,100)+"%";
+document.getElementById("percentage").textContent=percent+"% completed";
+document.getElementById("log").innerHTML=entries.length?
+entries.map(item=>"<p>"+item.amount+" ml — "+item.time+"</p>").join(""):"No water added yet.";
+}
+
+async function addWater(amount){
+entries.push({amount:amount,time:new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})});
+await saveToday();
+showMessage();
+}
+
+async function addCustom(){
+const amount=Number(document.getElementById("custom").value);
+if(amount<=0||!Number.isFinite(amount)){
+alert("Please enter a valid amount.");
+return;
+}
+document.getElementById("custom").value="";
+await addWater(amount);
+}
+
+async function clearToday(){
+if(confirm("Clear all of today's water entries?")){
+entries=[];
+await saveToday();
+}
+}
+
+async function loadWeek(){
+const area=document.getElementById("week");
+area.innerHTML="";
+for(let i=6;i>=0;i--){
+const date=new Date();
+date.setDate(date.getDate()-i);
+const key=date.toLocaleDateString("en-CA");
+const doc=await db.collection("users").doc(currentUser.uid)
+.collection("days").doc(key).get();
+const amount=doc.exists?(doc.data().entries||[]).reduce((s,e)=>s+Number(e.amount),0):0;
+area.innerHTML+="<p>"+date.toLocaleDateString("en-IN",{weekday:"short",day:"numeric"})+": <b>"+amount+" ml</b></p>";
+}
+}
+</script>
 </body>
-
 </html>
