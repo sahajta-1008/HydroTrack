@@ -1,12 +1,19 @@
 <!doctype html>
+
 <html lang="en">
 
 <head>
+
     <meta charset="utf-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>HydroTrack — Your Daily Water Companion</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         :root {
             --blue: #3988df;
@@ -161,6 +168,29 @@
             border: 0
         }
 
+        .log-entry-details {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .remove-entry-btn {
+            border: 1px solid #f1d9d9;
+            background: #fff8f8;
+            color: #b84d58;
+            border-radius: 9px;
+            padding: 5px 10px;
+            font-size: .78rem;
+            font-weight: 700;
+            transition: background .18s ease, border-color .18s ease;
+        }
+
+        .remove-entry-btn:hover {
+            background: #ffeded;
+            border-color: #e9bfc3;
+        }
+
         .quote {
             background: linear-gradient(120deg, #eaf5ff, #f4f9ff);
             border-radius: 16px;
@@ -173,6 +203,150 @@
             border-radius: 12px;
             padding: 11px;
             border-color: #d9e7f5
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap .form-control {
+            padding-right: 48px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 0;
+            background: transparent;
+            color: #71849a;
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .password-toggle:hover {
+            color: #2463a6;
+            background: #eef7ff;
+        }
+
+        .password-toggle svg {
+            width: 21px;
+            height: 21px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Glass counter additions */
+
+        .glass-actions {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .glass-action {
+            border: 1px solid #d8e9f8;
+            border-radius: 13px;
+            background: #f5faff;
+            color: #286da9;
+            font-weight: 700;
+            padding: 11px 6px;
+            transition: background .18s ease, transform .18s ease;
+        }
+
+        .glass-action:hover {
+            background: #e8f4ff;
+            transform: translateY(-1px);
+        }
+
+        .custom-glasses-row {
+            display: flex;
+            gap: 9px;
+            margin-top: 13px;
+        }
+
+        .custom-glasses-row input {
+            min-width: 0;
+            border-radius: 12px;
+        }
+
+        .custom-glasses-row button {
+            white-space: nowrap;
+            border-radius: 12px;
+            padding: 9px 15px;
+        }
+
+        .glass-progress-visual {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+            padding: 12px 14px;
+            border: 1px solid #e1eef9;
+            border-radius: 15px;
+            background: #f8fbff;
+        }
+
+        .mini-water-glass {
+            position: relative;
+            width: 31px;
+            height: 42px;
+            flex: 0 0 31px;
+            overflow: hidden;
+            border: 2px solid #77b5e5;
+            border-top: 0;
+            border-radius: 3px 3px 8px 8px;
+            background: #fff;
+        }
+
+        .mini-water-fill {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            height: 5%;
+            background: linear-gradient(180deg, #9bdcff, #58a9e4);
+            transition: height .65s ease;
+        }
+
+        .glass-progress-copy {
+            min-width: 0;
+            line-height: 1.35;
+        }
+
+        .glass-progress-copy strong {
+            display: block;
+            color: #286da9;
+            font-size: .9rem;
+        }
+
+        .glass-progress-copy span {
+            color: #788b9d;
+            font-size: .78rem;
+        }
+
+        @media (max-width: 420px) {
+            .glass-actions {
+                gap: 7px;
+            }
+
+            .glass-action {
+                font-size: .88rem;
+            }
+
+            .custom-glasses-row button {
+                padding-inline: 11px;
+            }
         }
 
         .auth-wrap {
@@ -223,155 +397,348 @@
             }
         }
     </style>
+
 </head>
 
 <body>
 
     <nav class="navbar navbar-expand">
+
         <div class="container">
+
             <a class="navbar-brand brand" href="#">💧 Hydro<span>Track</span></a>
+
             <div class="ms-auto d-flex align-items-center gap-2">
+
                 <span id="navUser" class="small text-secondary"></span>
+
                 <button id="logoutBtn" class="btn btn-outline-primary btn-sm rounded-pill hidden">Log out</button>
+
             </div>
+
         </div>
+
     </nav>
 
     <section id="authScreen" class="auth-wrap">
+
         <div class="auth-card">
+
             <div class="text-center mb-4">
+
                 <div style="font-size:2.7rem">💧</div>
+
                 <h2 class="fw-bold" style="color:#2463a6">HydroTrack</h2>
+
                 <p class="text-secondary mb-0">Your daily water companion</p>
+
             </div>
 
             <div id="authHeading" class="h5 fw-bold mb-3">Welcome back!</div>
 
             <form id="authForm">
+
                 <div class="mb-3">
+
                     <label class="form-label">Username</label>
+
                     <input id="usernameInput" class="form-control" placeholder="Choose your username" minlength="3"
                         maxlength="20" required autocomplete="username">
+
                     <div class="small-note mt-1">3–20 characters: letters, numbers, dots, hyphens or underscores.</div>
+
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">HydroTrack password</label>
-                    <input id="passwordInput" type="password" class="form-control"
-                        placeholder="Create your own password" minlength="6" required autocomplete="current-password">
+
+                    <label class="form-label" for="passwordInput">HydroTrack password</label>
+
+                    <div class="password-wrap">
+
+                        <input id="passwordInput" type="password" class="form-control"
+                            placeholder="Create your own password" minlength="6" required
+                            autocomplete="current-password">
+
+                        <button id="togglePassword" class="password-toggle" type="button" aria-label="Show password"
+                            aria-pressed="false" title="Show password">
+
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+
+                        </button>
+
+                    </div>
+
                     <div class="small-note mt-1">At least 6 characters. This is NOT your Gmail password.</div>
+
                 </div>
 
                 <button id="authSubmit" class="btn-main w-100" type="submit">Log in</button>
+
             </form>
 
             <p id="authError" class="text-danger small mt-3 mb-0"></p>
+
             <p id="authMessage" class="text-success small mt-2"></p>
 
             <p class="text-center small-note mt-3 mb-0">
+
                 <span id="switchText">New to HydroTrack?</span>
+
                 <a id="switchAuth" class="muted-link">Create an account</a>
+
             </p>
+
         </div>
+
     </section>
 
     <main id="appScreen" class="page hidden">
+
         <div class="welcome">
+
             <div>
+
                 <h1 id="helloText">Hello!</h1>
+
                 <div class="sub" id="todayText"></div>
+
             </div>
+
             <span class="pill">💙 One sip at a time</span>
+
         </div>
 
-        <div class="row g-4">
+
+
+        <!-- MAIN TWO-COLUMN LAYOUT -->
+
+        <div class="row g-4 align-items-start">
+
+
+
+            <!-- LEFT COLUMN -->
+
             <div class="col-lg-7">
+
                 <section class="cardx">
+
                     <div class="d-flex justify-content-between align-items-start gap-3">
+
                         <div>
+
                             <div class="label">TODAY'S WATER INTAKE</div>
+
                             <div class="mt-2"><span class="big" id="totalMl">0</span> <span class="unit">ml</span></div>
+
                             <div class="text-secondary" id="litresText">0 L · 0 glasses</div>
+
                         </div>
+
                         <div style="font-size:2.4rem">💧</div>
+
                     </div>
 
                     <div class="d-flex justify-content-between mt-4 mb-2">
+
                         <span class="label">Daily progress</span>
+
                         <strong id="percentText" style="color:#2463a6">0%</strong>
+
                     </div>
+
                     <div class="progress">
+
                         <div id="progressBar" class="progress-bar" style="width:0%"></div>
+
                     </div>
 
                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3">
+
                         <span class="small-note">Goal: <strong id="goalLabel">2000 ml</strong></span>
+
                         <button class="btn btn-sm btn-outline-primary rounded-pill" id="editGoalBtn">Edit goal</button>
+
                     </div>
 
                     <hr class="my-4" style="border-color:#e8f1fa">
 
                     <div class="section-title">🥛 Quick add water</div>
+
                     <div class="d-flex flex-wrap gap-2">
+
                         <button class="btn-water addBtn" data-amount="150">+150 ml</button>
+
                         <button class="btn-water addBtn" data-amount="250">+250 ml</button>
+
                         <button class="btn-water addBtn" data-amount="500">+500 ml</button>
+
                         <button class="btn-water addBtn" data-amount="750">+750 ml</button>
+
                     </div>
 
                     <div class="row g-2 mt-2">
+
                         <div class="col-7">
+
                             <input id="customAmount" type="number" min="1" class="form-control"
                                 placeholder="Custom amount (ml)">
+
                         </div>
+
                         <div class="col-5">
+
                             <button id="customAddBtn" class="btn-main w-100">Add water</button>
+
                         </div>
+
                     </div>
 
                     <div class="quote mt-4" id="quoteText">✨ Small sips make a big difference. Keep going!</div>
+
                 </section>
+
+
+
+                <!-- WEEKLY CHART MOVED HERE -->
+
+                <section class="cardx mt-4">
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                        <div class="section-title mb-0">📊 Your weekly water chart</div>
+
+                        <span class="small-note">Daily total (ml)</span>
+
+                    </div>
+
+                    <div style="height:260px;margin-top:16px">
+
+                        <canvas id="weekChart"></canvas>
+
+                    </div>
+
+                </section>
+
             </div>
+
+
+
+            <!-- RIGHT COLUMN -->
 
             <div class="col-lg-5">
+
                 <section class="cardx mb-4">
+
                     <div class="section-title">🥛 Glass counter</div>
+
                     <div class="d-flex align-items-end justify-content-between">
+
                         <div>
+
                             <div class="big" id="glassCount">0</div>
+
                             <div class="label">glasses today</div>
+
                         </div>
+
                         <div class="pill">1 glass = 250 ml</div>
+
                     </div>
-                    <button id="glassBtn" class="btn-main w-100 mt-3">＋ Add 1 glass (250 ml)</button>
+
+                    <div class="glass-actions mt-3">
+
+                        <button class="glass-action glassAddBtn" data-glasses="1" type="button">＋ 1 glass</button>
+
+                        <button class="glass-action glassAddBtn" data-glasses="2" type="button">＋ 2 glasses</button>
+
+                        <button class="glass-action glassAddBtn" data-glasses="4" type="button">＋ 4 glasses</button>
+
+                    </div>
+
+                    <div class="glass-hint">Quick add: 250 ml · 500 ml · 1,000 ml</div>
+
+                    <div class="custom-glasses-row">
+
+                        <input id="customGlasses" type="number" min="1" step="1" class="form-control"
+                            placeholder="Number of glasses">
+
+                        <button id="customGlassesBtn" class="btn-main" type="button">Add</button>
+
+                    </div>
+
+                    <div class="glass-progress-visual">
+
+                        <div class="mini-water-glass" aria-hidden="true">
+
+                            <div class="mini-water-fill" id="waterFill"></div>
+
+                        </div>
+
+                        <div class="glass-progress-copy">
+
+                            <strong id="waterVisualTitle">Your daily progress</strong>
+
+                            <span id="waterVisualText">Your water level will rise as you log drinks.</span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <section class="cardx mb-4">
+
+                    <div class="section-title">🔥 Your streak</div>
+
+                    <div class="row g-3">
+
+                        <div class="col-6">
+
+                            <div class="label">CURRENT STREAK</div>
+
+                            <div class="big"><span id="currentStreak">0</span> <span class="unit">days</span></div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="label">LONGEST STREAK</div>
+
+                            <div class="big"><span id="longestStreak">0</span> <span class="unit">days</span></div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="quote mt-3" id="streakMessage">💧 Reach your daily goal to start a streak!</div>
+
                 </section>
 
                 <section class="cardx">
-                    <div class="section-title">📝 Today's drink log</div>
+
+                    <div class="section-title">💧 Water you've added</div>
+
                     <div id="drinkLog" class="small-note">No water added yet. Start with a glass!</div>
-                    <button id="clearBtn" class="btn btn-sm btn-outline-secondary rounded-pill mt-3">Clear today's
-                        log</button>
+
+                    <button id="clearBtn" class="btn btn-sm btn-outline-secondary rounded-pill mt-3">Clear all
+                        entries</button>
+
                 </section>
+
             </div>
 
-            <div class="col-12">
-                <section class="cardx">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                        <div class="section-title mb-0">📊 Your weekly water chart</div>
-                        <span class="small-note">Daily total (ml)</span>
-                    </div>
-                    <div style="height:260px;margin-top:16px">
-                        <canvas id="weekChart"></canvas>
-                    </div>
-                </section>
-            </div>
         </div>
 
         <p class="text-center small-note mt-4">Made with 💙 · Stay hydrated, stay happy!</p>
-    </main>
 
+    </main>
     <script type="module">
+
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+
         import {
             getAuth,
             createUserWithEmailAndPassword,
@@ -384,6 +751,8 @@
             getFirestore,
             doc,
             getDoc,
+            getDocs,
+            collection,
             setDoc
         } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
@@ -399,7 +768,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
         const $ = id => document.getElementById(id);
 
         let signup = false;
@@ -419,6 +787,7 @@
 
         // Convert the chosen username into an internal Firebase email identifier.
         // The user never has to enter or own this email address.
+
         function usernameToEmail(username) {
             return username.trim().toLowerCase() + "@hydrotrack-d5802.firebaseapp.com";
         }
@@ -443,248 +812,696 @@
 
         function render() {
             $("totalMl").textContent = total.toLocaleString("en-IN");
+
             $("litresText").textContent = `${(total / 1000).toFixed(2)} L · ${Math.floor(total / 250)} glasses`;
+
             $("glassCount").textContent = (total / 250).toFixed(1).replace(/\.0$/, "");
 
             const pct = Math.min(100, Math.round(total / goal * 100));
+
+            const waterFill = $("waterFill");
+            if (waterFill) waterFill.style.height = Math.max(5, pct) + "%";
+
+            const waterVisualTitle = $("waterVisualTitle");
+            const waterVisualText = $("waterVisualText");
+
+            if (waterVisualTitle && waterVisualText) {
+                waterVisualTitle.textContent = pct >= 100 ? "Daily goal reached!" : "Your daily progress";
+
+                waterVisualText.textContent = pct >= 100
+                    ? "You have reached your water goal for today."
+                    : `${Math.max(0, goal - total).toLocaleString("en-IN")} ml left to reach your goal`;
+            }
+
             $("percentText").textContent = pct + "%";
             $("progressBar").style.width = pct + "%";
             $("goalLabel").textContent = goal.toLocaleString("en-IN") + " ml";
 
             $("drinkLog").innerHTML = entries.length
-                ? entries.slice().reverse().map(e =>
-                    `<div class="log-item"><span>💧 ${new Date(e.time).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</span><strong>${e.amount} ml</strong></div>`
+                ? entries.map((e, index) => ({ ...e, originalIndex: index })).reverse().map(e =>
+                    `<div class="log-item">
+                        <div class="log-entry-details">
+                            <span>💧 ${new Date(e.time).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</span>
+                            <strong>${Number(e.amount).toLocaleString("en-IN")} ml</strong>
+                        </div>
+                        <button class="remove-entry-btn" type="button" data-entry-index="${e.originalIndex}" aria-label="Remove ${e.amount} ml entry" title="Remove this entry">Remove</button>
+                    </div>`
                 ).join("")
                 : "No water added yet. Start with a glass!";
         }
 
         async function save() {
-            await setDoc(entryRef(localDate()), { total, entries, updatedAt: Date.now() });
+
+            await setDoc(entryRef(localDate()), {
+                total,
+                entries,
+                goal,
+                updatedAt: Date.now()
+            });
+
             await setDoc(settingsRef(), { goal });
+
+            await updateStreak();
+
+        }
+
+        function previousDate(dateKey) {
+
+            const [year, month, day] = dateKey.split("-").map(Number);
+
+            const date = new Date(year, month - 1, day);
+
+            date.setDate(date.getDate() - 1);
+
+            return localDate(date);
+
+        }
+
+        async function updateStreak() {
+
+            if (!user) return;
+
+            const snapshot = await getDocs(
+                collection(db, "users", user.uid, "entries")
+            );
+
+            const completedDates = [];
+
+            snapshot.forEach(dayDoc => {
+
+                const data = dayDoc.data();
+
+                const dayTotal = Number(data.total) || 0;
+
+                const dayGoal = Number(data.goal) || goal;
+
+                if (dayGoal > 0 && dayTotal >= dayGoal) {
+                    completedDates.push(dayDoc.id);
+                }
+
+            });
+
+            completedDates.sort();
+
+            const completedSet = new Set(completedDates);
+
+            const today = localDate();
+
+            let cursor = completedSet.has(today) ? today : previousDate(today);
+
+            let current = 0;
+
+            while (completedSet.has(cursor)) {
+
+                current++;
+
+                cursor = previousDate(cursor);
+
+            }
+
+            let longest = 0;
+
+            let running = 0;
+
+            let previous = null;
+
+            for (const date of completedDates) {
+
+                if (previous && previousDate(date) === previous) {
+                    running++;
+                } else {
+                    running = 1;
+                }
+
+                longest = Math.max(longest, running);
+
+                previous = date;
+
+            }
+
+            $("currentStreak").textContent = current;
+
+            $("longestStreak").textContent = longest;
+
+            const message = $("streakMessage");
+
+            if (completedSet.has(today)) {
+
+                message.textContent = "🔥 Today's goal reached! Great job!";
+
+            } else if (current > 0) {
+
+                message.textContent = "💧 Reach today's goal to keep your streak going!";
+
+            } else {
+
+                message.textContent = "✨ Reach your daily goal to start a streak!";
+
+            }
+
         }
 
         async function addWater(amount) {
+
             if (!user || !Number.isFinite(amount) || amount <= 0) return;
 
             total += Math.round(amount);
+
             entries.push({ amount: Math.round(amount), time: Date.now() });
+
             render();
 
             try {
+
                 await save();
+
                 await updateChart();
+
             } catch (e) {
+
                 alert("Could not save your water data. Please check your internet connection.");
+
             }
+
         }
 
         async function loadData() {
+
             const [daySnap, settingSnap] = await Promise.all([
+
                 getDoc(entryRef(localDate())),
+
                 getDoc(settingsRef())
+
             ]);
 
             if (daySnap.exists()) {
+
                 const d = daySnap.data();
+
                 total = Number(d.total) || 0;
+
                 entries = Array.isArray(d.entries) ? d.entries : [];
+
             } else {
+
                 total = 0;
+
                 entries = [];
+
             }
 
             if (settingSnap.exists()) goal = Number(settingSnap.data().goal) || 2000;
+
             render();
+
+            await updateStreak();
+
             await updateChart();
+
         }
 
         async function updateChart() {
+
             const labels = [];
+
             const values = [];
 
             for (let i = 6; i >= 0; i--) {
+
                 const d = new Date();
+
                 d.setDate(d.getDate() - i);
+
                 const key = localDate(d);
 
                 labels.push(d.toLocaleDateString("en-IN", { weekday: "short" }));
 
                 if (key === localDate()) {
+
                     values.push(total);
+
                     continue;
+
                 }
 
                 const snap = await getDoc(entryRef(key));
+
                 values.push(snap.exists() ? Number(snap.data().total) || 0 : 0);
+
             }
 
             const ctx = $("weekChart").getContext("2d");
+
             if (chart) chart.destroy();
 
             chart = new Chart(ctx, {
+
                 type: "bar",
+
                 data: {
+
                     labels,
+
                     datasets: [{
+
                         label: "Water (ml)",
+
                         data: values,
+
                         backgroundColor: "#79baf0",
+
                         borderRadius: 9,
+
                         maxBarThickness: 38
+
                     }]
+
                 },
+
                 options: {
+
                     responsive: true,
+
                     maintainAspectRatio: false,
+
                     plugins: { legend: { display: false } },
+
                     scales: {
+
                         y: { beginAtZero: true, grid: { color: "#edf3f9" }, ticks: { color: "#71849a" } },
+
                         x: { grid: { display: false }, ticks: { color: "#71849a" } }
+
                     }
+
                 }
+
             });
+
+        }
+        function passwordEyeIcon(visible) {
+
+            if (visible) {
+
+                return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a15.8 15.8 0 0 1-3.1 3.8"></path><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7a10.5 10.5 0 0 0 4-.8"></path></svg>`;
+
+            }
+
+            return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+
         }
 
         function showApp(u) {
+
             user = u;
+
             $("authScreen").classList.add("hidden");
+
             $("appScreen").classList.remove("hidden");
+
             $("logoutBtn").classList.remove("hidden");
 
             const username = u.displayName || u.email.split("@")[0];
+
             $("helloText").textContent = `Hello, ${username}! 👋`;
+
             $("navUser").textContent = username;
+
             $("todayText").textContent = prettyDate();
+
             $("quoteText").textContent = quotes[new Date().getDate() % quotes.length];
 
             loadData().catch(e => alert("Could not load your data: " + e.message));
+
         }
 
         function showAuth() {
+
             $("appScreen").classList.add("hidden");
+
             $("authScreen").classList.remove("hidden");
+
             $("logoutBtn").classList.add("hidden");
+
             $("navUser").textContent = "";
+
             user = null;
 
             signup = false;
+
             $("authHeading").textContent = "Welcome back!";
+
             $("authSubmit").textContent = "Log in";
+
             $("switchText").textContent = "New to HydroTrack?";
+
             $("switchAuth").textContent = "Create an account";
+
             $("passwordInput").placeholder = "Enter your password";
+
             $("passwordInput").autocomplete = "current-password";
+
             $("authError").textContent = "";
+
             $("authMessage").textContent = "";
+
+            $("passwordInput").type = "password";
+
+            $("togglePassword").innerHTML = passwordEyeIcon(false);
+
+            $("togglePassword").setAttribute("aria-label", "Show password");
+
+            $("togglePassword").setAttribute("title", "Show password");
+
+            $("togglePassword").setAttribute("aria-pressed", "false");
+
         }
 
         function showError(message) {
+
             const messages = {
+
                 "auth/email-already-in-use": "That username is already taken. Please choose another.",
+
                 "auth/invalid-credential": "Incorrect username or password. Please try again.",
+
                 "auth/weak-password": "Please choose a stronger password with at least 6 characters.",
+
                 "auth/network-request-failed": "Connection problem. Please check your internet.",
+
                 "auth/too-many-requests": "Too many attempts. Please wait a little and try again."
+
             };
 
             $("authError").textContent = messages[message] || "Something went wrong. Please try again.";
+
         }
 
         onAuthStateChanged(auth, u => u ? showApp(u) : showAuth());
 
         $("switchAuth").addEventListener("click", () => {
+
             signup = !signup;
 
             $("authHeading").textContent = signup ? "Create your HydroTrack account" : "Welcome back!";
+
             $("authSubmit").textContent = signup ? "Create account" : "Log in";
+
             $("switchText").textContent = signup ? "Already have an account?" : "New to HydroTrack?";
+
             $("switchAuth").textContent = signup ? "Log in" : "Create an account";
+
             $("passwordInput").placeholder = signup ? "Create a new password" : "Enter your password";
+
             $("passwordInput").autocomplete = signup ? "new-password" : "current-password";
+
             $("authError").textContent = "";
+
             $("authMessage").textContent = "";
+
         });
 
         $("authForm").addEventListener("submit", async e => {
+
             e.preventDefault();
 
             $("authError").textContent = "";
+
             $("authMessage").textContent = "";
+
             $("authSubmit").disabled = true;
 
             try {
+
                 const username = $("usernameInput").value.trim().toLowerCase();
+
                 const password = $("passwordInput").value;
 
                 if (!/^[a-z0-9._-]{3,20}$/.test(username)) {
+
                     throw new Error("Choose a username with 3–20 letters, numbers, dots, hyphens or underscores.");
+
                 }
 
                 if (password.length < 6) {
+
                     throw new Error("Your HydroTrack password must have at least 6 characters.");
+
                 }
 
                 const internalEmail = usernameToEmail(username);
 
                 if (signup) {
+
                     const cred = await createUserWithEmailAndPassword(auth, internalEmail, password);
 
                     await setDoc(doc(db, "users", cred.user.uid, "settings", "main"), {
+
                         goal: 2000,
+
                         username: username
+
                     });
 
                     $("authMessage").textContent = "Your HydroTrack account has been created!";
+
                 } else {
+
                     await signInWithEmailAndPassword(auth, internalEmail, password);
+
                 }
 
             } catch (err) {
-                if (err.code) showError(err.code);
-                else $("authError").textContent = err.message;
+                console.error("HydroTrack account error:", err);
+
+                $("authError").textContent =
+                    (err.code || "Error") + ": " + (err.message || "Unknown error");
             } finally {
                 $("authSubmit").disabled = false;
             }
+
         });
 
         $("logoutBtn").addEventListener("click", () => signOut(auth));
 
         document.querySelectorAll(".addBtn").forEach(b => {
+
             b.addEventListener("click", () => addWater(Number(b.dataset.amount)));
+
         });
 
-        $("glassBtn").addEventListener("click", () => addWater(250));
+        document.querySelectorAll(".glassAddBtn").forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                const glasses = Number(button.dataset.glasses);
+
+                addWater(glasses * 250);
+
+            });
+
+        });
+
+        $("customGlassesBtn").addEventListener("click", () => {
+
+            const count = Number($("customGlasses").value);
+
+            if (Number.isInteger(count) && count > 0) {
+
+                addWater(count * 250);
+
+                $("customGlasses").value = "";
+
+            } else {
+
+                alert("Please enter a whole number of glasses greater than 0.");
+
+            }
+
+        });
+
+        $("customGlasses").addEventListener("keydown", event => {
+
+            if (event.key === "Enter") $("customGlassesBtn").click();
+
+        });
 
         $("customAddBtn").addEventListener("click", () => {
+
             const n = Number($("customAmount").value);
+
             if (n > 0) {
+
                 addWater(n);
+
                 $("customAmount").value = "";
+
             } else {
+
                 alert("Please enter an amount greater than 0.");
+
             }
+
         });
 
         $("editGoalBtn").addEventListener("click", async () => {
+
             const n = Number(prompt("Enter your daily water goal in ml:", goal));
 
             if (Number.isFinite(n) && n > 0) {
+
                 goal = Math.round(n);
+
                 render();
+
                 await setDoc(settingsRef(), { goal });
+
+                await setDoc(entryRef(localDate()), { total, entries, goal, updatedAt: Date.now() });
+
+                await updateStreak();
+
             }
+
         });
 
-        $("clearBtn").addEventListener("click", async () => {
-            if (confirm("Clear today's water log? This cannot be undone.")) {
-                total = 0;
-                entries = [];
-                render();
+        // Remove one drink entry without clearing the rest of the day.
+
+        $("drinkLog").addEventListener("click", async event => {
+
+            const button = event.target.closest(".remove-entry-btn");
+
+            if (!button || !user) return;
+
+            const index = Number(button.dataset.entryIndex);
+
+            if (!Number.isInteger(index) || index < 0 || index >= entries.length) return;
+
+            const previousEntries = entries.map(entry => ({ ...entry }));
+
+            const previousTotal = total;
+
+            entries.splice(index, 1);
+
+            total = entries.reduce((sum, entry) => sum + (Number(entry.amount) || 0), 0);
+
+            render();
+
+            try {
+
                 await save();
+
                 await updateChart();
+
+            } catch (error) {
+
+                console.error("Remove drink entry failed:", error);
+
+                entries = previousEntries;
+
+                total = previousTotal;
+
+                render();
+
+                alert("That entry could not be removed because your data could not be saved. Please check your internet connection and try again.");
+
             }
+
         });
+
+        // Clear only today's entries. This button remains usable after every reset.
+
+        $("clearBtn").addEventListener("click", async () => {
+
+            if (!user) return;
+
+            if (!confirm("Remove all the water entries for today? This cannot be undone.")) return;
+
+            const previousTotal = total;
+
+            const previousEntries = entries;
+
+            total = 0;
+
+            entries = [];
+
+            render();
+
+            try {
+
+                // Save an empty day document so the reset is stored in Firebase too.
+
+                await setDoc(entryRef(localDate()), {
+
+                    total: 0,
+
+                    entries: [],
+
+                    goal,
+
+                    updatedAt: Date.now()
+
+                });
+
+                await updateStreak();
+
+                await updateChart();
+
+            } catch (error) {
+
+                console.error("Clear today's log failed:", error);
+
+                // Restore the previous display if Firebase could not save the reset.
+
+                total = previousTotal;
+
+                entries = previousEntries;
+
+                render();
+
+                alert("Your water entries could not be cleared because the changes could not be saved. Check your internet connection and try again.");
+
+            }
+
+        });
+
     </script>
+
+    <script>
+
+        // Password visibility toggle is kept outside the Firebase module so it
+        // still works even if a Firebase script has a loading problem.
+
+        document.addEventListener("click", function (event) {
+
+            const button = event.target.closest("#togglePassword");
+
+            if (!button) return;
+
+            const passwordField = document.getElementById("passwordInput");
+
+            if (!passwordField) return;
+
+            const showPassword = passwordField.type === "password";
+
+            passwordField.type = showPassword ? "text" : "password";
+
+            button.innerHTML = showPassword
+
+                ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"></path><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a15.8 15.8 0 0 1-3.1 3.8"></path><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7a10.5 10.5 0 0 0 4-.8"></path></svg>'
+
+                : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+
+            button.setAttribute("aria-label", showPassword ? "Hide password" : "Show password");
+
+            button.setAttribute("title", showPassword ? "Hide password" : "Show password");
+
+            button.setAttribute("aria-pressed", String(showPassword));
+
+        });
+
+    </script>
+
 </body>
 
 </html>
